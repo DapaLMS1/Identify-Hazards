@@ -1,190 +1,262 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Hazard Learning Activity</title>
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <style>
-    body {
-      font-family: 'Inter', sans-serif;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hazard Learning Activity</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
 
-    #roll-button, #restart-button {
-      background-color: #532A8C;
-      transition: background-color 0.3s ease-in-out, transform 0.3s ease-in-out;
-    }
+        #roll-button, #restart-button {
+            background-color: #532A8C;
+            transition: background-color 0.3s ease-in-out, transform 0.3s ease-in-out;
+        }
 
-    #roll-button:hover, #restart-button:hover {
-      background-color: #7ABF49;
-    }
+        #roll-button:hover, #restart-button:hover {
+            background-color: #7ABF49;
+        }
 
-    @keyframes slide-out-up {
-      from { transform: translateY(0); opacity: 1; }
-      to { transform: translateY(-100%); opacity: 0; }
-    }
+        @keyframes slide-out-up {
+            from { transform: translateY(0); opacity: 1; }
+            to { transform: translateY(-100%); opacity: 0; }
+        }
 
-    @keyframes slide-in-up {
-      from { transform: translateY(100%); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
-    }
+        @keyframes slide-in-up {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
 
-    @keyframes pulse-bg {
-      0% { background-color: #F2F2F2; }
-      50% { background-color: #e9e4f5; }
-      100% { background-color: #F2F2F2; }
-    }
+        @keyframes pulse-bg {
+            0% { background-color: #F2F2F2; }
+            50% { background-color: #e9e4f5; }
+            100% { background-color: #F2F2F2; }
+        }
 
-    .animate-slide-out-up {
-      animation: slide-out-up 0.5s forwards;
-    }
+        .animate-slide-out-up {
+            animation: slide-out-up 0.5s forwards;
+        }
 
-    .animate-slide-in-up {
-      animation: slide-in-up 0.5s forwards;
-    }
+        .animate-slide-in-up {
+            animation: slide-in-up 0.5s forwards;
+        }
 
-    .pulse-background {
-      animation: pulse-bg 1s;
-    }
-  </style>
+        .pulse-background {
+            animation: pulse-bg 1s;
+        }
+    </style>
 </head>
 <body class="bg-[#9D8ABB] min-h-screen flex items-center justify-center p-4">
-  <div class="bg-[#F2F2F2] p-6 rounded-2xl shadow-xl max-w-2xl w-full">
-    <h1 class="text-3xl font-bold text-center mb-6 text-[#532A8C]">Hazard Learning Activity</h1>
+    <div class="bg-[#F2F2F2] p-6 rounded-2xl shadow-xl max-w-2xl w-full">
+        <h1 class="text-3xl font-bold text-center mb-6 text-[#532A8C]">Identify hazards</h1>
 
-    <!-- Progress Tracker -->
-    <div id="progress" class="text-center text-sm text-[#025159] mb-2 font-medium"></div>
+        <!-- Progress Tracker -->
+        <div id="progress" class="text-center text-sm text-[#025159] mb-2 font-medium"></div>
 
-    <!-- Tube Container -->
-    <div id="tube-container" class="relative overflow-hidden h-64 rounded-xl border-2 p-4 flex items-center justify-center bg-[#F2F2F2]" style="border-color: #C3ACE8;">
-      <div id="content-display" class="absolute w-full h-full flex flex-col justify-center items-center text-center px-4"></div>
+        <!-- Tube Container -->
+        <div id="tube-container" class="relative overflow-hidden h-64 rounded-xl border-2 p-4 flex items-center justify-center bg-[#F2F2F2]" style="border-color: #C3ACE8;">
+            <div id="content-display" class="absolute w-full h-full flex flex-col justify-center items-center text-center px-4"></div>
+        </div>
+
+        <!-- Buttons -->
+        <div class="mt-8 flex flex-col gap-4">
+            <button id="roll-button" class="py-3 rounded-xl text-white font-semibold">Next hazard</button>
+            <button id="restart-button" class="py-3 rounded-xl text-white font-semibold hidden">Start Over</button>
+        </div>
     </div>
 
-    <!-- Buttons -->
-    <div class="mt-8 flex flex-col gap-4">
-      <button id="roll-button" class="py-3 rounded-xl text-white font-semibold">Next hazard</button>
-      <button id="restart-button" class="py-3 rounded-xl text-white font-semibold hidden">Start Over</button>
-    </div>
-  </div>
+    <script>
+        const hazardContent = [
+            {
+                category: "Physical Hazards",
+                items: [
+                    "Slippery floors: Spills of water, saliva, or cleaning solutions in treatment rooms, labs, or waiting areas.",
+                    "Radiation exposure: From improperly calibrated or malfunctioning X-ray machines.",
+                    "Ergonomic strain from poor posture: Working at the dental chair for long periods.",
+                    "Loud noises: From compressors and suction units.",
+                    "Trip hazards: Cluttered treatment rooms or tangled cords."
+                ]
+            },
+            {
+                category: "Mechanical/Electrical Hazards",
+                items: [
+                    "Faulty equipment: Malfunctioning chairs or ultrasonic cleaners.",
+                    "Electrical malfunctions: Damaged wiring or overloaded circuits.",
+                    "Compressed gas risks: Leaks from gas cylinders."
+                ]
+            },
+            {
+                category: "Chemical Hazards",
+                items: [
+                    "Disinfectants and sterilising agents: Exposure to glutaraldehyde or bleach.",
+                    "Anesthetics: Inhalation or accidental needle sticks.",
+                    "X-ray processing solutions: Exposure to corrosive chemicals.",
+                    "Mercury: From amalgam fillings."
+                ]
+            },
+            {
+                category: "Biological Hazards",
+                items: [
+                    "Bloodborne pathogens: Hepatitis B/C or HIV from needle sticks.",
+                    "Contaminated instruments: Improper sterilisation.",
+                    "Patient-borne infections: Airborne respiratory infections."
+                ]
+            },
+            {
+                category: "Psychological Hazards",
+                items: [
+                    "Patient-related stress: Dealing with anxious or aggressive patients.",
+                    "Workload stress: Tight schedules and high volume.",
+                    "Verbal or physical abuse: From distressed patients."
+                ]
+            }
+        ];
 
-  <script>
-    const hazardContent = [
-      {
-        category: "Physical Hazards",
-        items: [
-          "Slippery floors: Spills of water, saliva, or cleaning solutions in treatment rooms, labs, or waiting areas.",
-          "Radiation exposure: From improperly calibrated or malfunctioning X-ray machines.",
-          "Ergonomic strain from poor posture: Working at the dental chair for long periods.",
-          "Loud noises: From compressors and suction units.",
-          "Trip hazards: Cluttered treatment rooms or tangled cords."
-        ]
-      },
-      {
-        category: "Mechanical/Electrical Hazards",
-        items: [
-          "Faulty equipment: Malfunctioning chairs or ultrasonic cleaners.",
-          "Electrical malfunctions: Damaged wiring or overloaded circuits.",
-          "Compressed gas risks: Leaks from gas cylinders."
-        ]
-      },
-      {
-        category: "Chemical Hazards",
-        items: [
-          "Disinfectants and sterilising agents: Exposure to glutaraldehyde or bleach.",
-          "Anesthetics: Inhalation or accidental needle sticks.",
-          "X-ray processing solutions: Exposure to corrosive chemicals.",
-          "Mercury: From amalgam fillings."
-        ]
-      },
-      {
-        category: "Biological Hazards",
-        items: [
-          "Bloodborne pathogens: Hepatitis B/C or HIV from needle sticks.",
-          "Contaminated instruments: Improper sterilisation.",
-          "Patient-borne infections: Airborne respiratory infections."
-        ]
-      },
-      {
-        category: "Psychological Hazards",
-        items: [
-          "Patient-related stress: Dealing with anxious or aggressive patients.",
-          "Workload stress: Tight schedules and high volume.",
-          "Verbal or physical abuse: From distressed patients."
-        ]
-      }
-    ];
+        const contentDisplay = document.getElementById('content-display');
+        const rollButton = document.getElementById('roll-button');
+        const restartButton = document.getElementById('restart-button');
+        const progressDisplay = document.getElementById('progress');
 
-    const contentDisplay = document.getElementById('content-display');
-    const rollButton = document.getElementById('roll-button');
-    const restartButton = document.getElementById('restart-button');
-    const progressDisplay = document.getElementById('progress');
+        // currentIndex now refers to the index of the CATEGORY in hazardContent
+        let currentIndex = 0;
 
-    let flatContent = [];
-    hazardContent.forEach(group => {
-      group.items.forEach(item => {
-        flatContent.push({
-          category: group.category,
-          item
-        });
-      });
-    });
-
-    let currentIndex = 0;
-
-    function updateProgress() {
-      progressDisplay.textContent = `Hazard ${currentIndex + 1} of ${flatContent.length}`;
-    }
-
-    function showContent(index) {
-      const data = flatContent[index];
-      const newContent = document.createElement('div');
-      newContent.className = 'absolute w-full h-full flex flex-col justify-center items-center text-center px-4 animate-slide-in-up';
-      newContent.innerHTML = `
-        <h2 class="text-2xl font-semibold mb-2 text-[#532A8C]">${data.category}</h2>
-        <p class="text-lg text-[#532A8C]">${data.item}</p>
-      `;
-
-      const oldContent = contentDisplay.firstElementChild;
-      if (oldContent) {
-        oldContent.classList.add('animate-slide-out-up');
-        oldContent.addEventListener('animationend', () => {
-          contentDisplay.removeChild(oldContent);
-          contentDisplay.appendChild(newContent);
-          document.getElementById('tube-container').classList.add('pulse-background');
-          setTimeout(() => {
-            document.getElementById('tube-container').classList.remove('pulse-background');
-          }, 1000);
-        }, { once: true });
-      } else {
-        contentDisplay.appendChild(newContent);
-      }
-
-      updateProgress();
-    }
-
-    rollButton.addEventListener('click', () => {
-      if (currentIndex < flatContent.length - 1) {
-        currentIndex++;
-        showContent(currentIndex);
-        if (currentIndex === flatContent.length - 1) {
-          rollButton.classList.add('hidden');
-          restartButton.classList.remove('hidden');
+        /**
+         * Updates the progress display text based on the current category.
+         */
+        function updateProgress() {
+            progressDisplay.textContent = `Category ${currentIndex + 1} of ${hazardContent.length}`;
+            console.log(`[Progress] Category ${currentIndex + 1} of ${hazardContent.length}`); // Log progress
         }
-      }
-    });
 
-    restartButton.addEventListener('click', () => {
-      currentIndex = 0;
-      showContent(currentIndex);
-      restartButton.classList.add('hidden');
-      rollButton.classList.remove('hidden');
-    });
+        /**
+         * Displays the content for the given category index with animation.
+         * @param {number} index The index of the category in the hazardContent array to display.
+         */
+        function showContent(index) {
+            const categoryData = hazardContent[index]; // Get the entire category data
+            console.log(`[showContent] Attempting to show category: ${categoryData.category} (index: ${index})`); // Log category to be shown
 
-    document.addEventListener('DOMContentLoaded', () => {
-      showContent(currentIndex);
-    });
-  </script>
+            // Build the HTML for all items within the current category
+            let itemsHtml = categoryData.items.map(item => `<li class="text-base text-[#532A8C] mb-1">${item}</li>`).join('');
+
+            // Create a new div element for the incoming content
+            const newContent = document.createElement('div');
+            newContent.className = 'absolute w-full h-full flex flex-col justify-center items-center text-center px-4 animate-slide-in-up overflow-y-auto'; // Added overflow-y-auto
+            newContent.innerHTML = `
+                <h2 class="text-2xl font-semibold mb-3 text-[#532A8C]">${categoryData.category}</h2>
+                <ul class="list-disc list-inside text-left w-full px-4">${itemsHtml}</ul>
+            `;
+            console.log('[showContent] New content element created.');
+
+            const oldContent = contentDisplay.firstElementChild; // Get the currently displayed content
+            console.log('[showContent] Old content element:', oldContent);
+
+            if (oldContent) {
+                // If there's old content, animate it out
+                oldContent.classList.add('animate-slide-out-up');
+                console.log('[showContent] Added slide-out animation to old content.');
+
+                // Use a promise-based approach or a more robust animation listener
+                // to ensure the animation completes before removing the element.
+                const handleAnimationEnd = () => {
+                    console.log('[showContent] oldContent animationend fired.');
+                    oldContent.removeEventListener('animationend', handleAnimationEnd); // Clean up listener
+                    if (contentDisplay.contains(oldContent)) { // Check if it's still a child
+                        contentDisplay.removeChild(oldContent);
+                        console.log('[showContent] Old content removed from DOM.');
+                    } else {
+                        console.log('[showContent] Old content already removed or not found, skipping removeChild.');
+                    }
+
+                    contentDisplay.appendChild(newContent);
+                    console.log('[showContent] New content appended to DOM.');
+
+                    // Add a pulse background effect to the container
+                    document.getElementById('tube-container').classList.add('pulse-background');
+                    setTimeout(() => {
+                        document.getElementById('tube-container').classList.remove('pulse-background');
+                        console.log('[showContent] Pulse background removed.');
+                    }, 1000); // Remove pulse class after 1 second
+                };
+                oldContent.addEventListener('animationend', handleAnimationEnd);
+
+                // Fallback timeout in case animationend doesn't fire (e.g., if element is hidden/removed too fast)
+                setTimeout(() => {
+                    if (oldContent.classList.contains('animate-slide-out-up')) {
+                        console.warn('[showContent] Animationend might not have fired, forcing content swap after timeout.');
+                        oldContent.removeEventListener('animationend', handleAnimationEnd); // Remove listener to prevent double execution
+                        if (contentDisplay.contains(oldContent)) {
+                            contentDisplay.removeChild(oldContent);
+                        }
+                        if (!contentDisplay.contains(newContent)) { // Only append if not already there
+                             contentDisplay.appendChild(newContent);
+                        }
+                        document.getElementById('tube-container').classList.add('pulse-background');
+                        setTimeout(() => {
+                            document.getElementById('tube-container').classList.remove('pulse-background');
+                        }, 1000);
+                    }
+                }, 600); // Slightly longer than animation duration
+            } else {
+                // If no old content (initial load), just append the new content
+                contentDisplay.appendChild(newContent);
+                console.log('[showContent] Initial content appended to DOM.');
+            }
+
+            updateProgress(); // Update the progress tracker
+        }
+
+        // Event listener for the "Next hazard" button
+        rollButton.addEventListener('click', () => {
+            console.log('[Button Click] Next hazard button clicked. Current category index:', currentIndex); // Log current index on click
+            // Disable the button immediately to prevent multiple rapid clicks
+            rollButton.disabled = true;
+            console.log('[Button Click] Button disabled.');
+
+            // Check if there are more categories to display
+            if (currentIndex < hazardContent.length - 1) {
+                currentIndex++; // Move to the next category
+                console.log('[Button Click] Incrementing index to:', currentIndex);
+                showContent(currentIndex); // Display the next category
+
+                // Re-enable button after a delay that covers both animations
+                setTimeout(() => {
+                    rollButton.disabled = false;
+                    console.log('[Button Click] Button re-enabled after animation delay.');
+                }, 1100); // 0.5s slide-out + 0.5s slide-in + small buffer
+
+                // If this is the last category, hide the "Next hazard" button and show "Start Over"
+                if (currentIndex === hazardContent.length - 1) {
+                    rollButton.classList.add('hidden');
+                    restartButton.classList.remove('hidden');
+                    console.log('[Button Click] Reached end of categories. Showing restart button.');
+                }
+            } else {
+                console.log('[Button Click] No more categories to show. Currently at index:', currentIndex);
+                rollButton.disabled = false; // Re-enable if no progression
+            }
+        });
+
+        // Event listener for the "Start Over" button
+        restartButton.addEventListener('click', () => {
+            console.log('[Restart] Restart button clicked.'); // Log restart
+            currentIndex = 0; // Reset index to the first category
+            showContent(currentIndex); // Display the first category
+            // Hide the "Start Over" button and show "Next hazard" button
+            restartButton.classList.add('hidden');
+            rollButton.classList.remove('hidden');
+            console.log('[Restart] Activity restarted. Showing first category.');
+        });
+
+        // Initial load: display the first category when the DOM is fully loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            showContent(currentIndex);
+            console.log('[DOMContentLoaded] Initial content loaded and displayed.');
+        });
+    </script>
 </body>
 </html>

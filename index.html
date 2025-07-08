@@ -59,7 +59,7 @@
 
         <!-- Tube Container -->
         <div id="tube-container" class="relative overflow-hidden h-64 rounded-xl border-2 p-4 flex items-center justify-center bg-[#F2F2F2]" style="border-color: #C3ACE8;">
-            <div id="content-display" class="absolute w-full h-full flex flex-col justify-center items-center text-center px-4"></div>
+            <div id="content-display" class="absolute w-full h-full flex flex-col justify-start items-center text-center px-4"></div>
         </div>
 
         <!-- Buttons -->
@@ -145,7 +145,8 @@
 
             // Create a new div element for the incoming content
             const newContent = document.createElement('div');
-            newContent.className = 'absolute w-full h-full flex flex-col justify-center items-center text-center px-4 animate-slide-in-up overflow-y-auto'; // Added overflow-y-auto
+            // Changed justify-center to justify-start and added pt-4 for top padding
+            newContent.className = 'absolute w-full h-full flex flex-col justify-start items-center text-center px-4 pt-4 animate-slide-in-up overflow-y-auto';
             newContent.innerHTML = `
                 <h2 class="text-2xl font-semibold mb-3 text-[#532A8C]">${categoryData.category}</h2>
                 <ul class="list-disc list-inside text-left w-full px-4">${itemsHtml}</ul>
@@ -160,8 +161,6 @@
                 oldContent.classList.add('animate-slide-out-up');
                 console.log('[showContent] Added slide-out animation to old content.');
 
-                // Use a promise-based approach or a more robust animation listener
-                // to ensure the animation completes before removing the element.
                 const handleAnimationEnd = () => {
                     console.log('[showContent] oldContent animationend fired.');
                     oldContent.removeEventListener('animationend', handleAnimationEnd); // Clean up listener

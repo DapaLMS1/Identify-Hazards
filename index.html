@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hazard Learning Activity</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+
+    #roll-button, #restart-button {
+      background-color: #532A8C;
+      transition: background-color 0.3s ease-in-out, transform 0.3s ease-in-out;
+    }
+
+    #roll-button:hover, #restart-button:hover {
+      background-color: #7ABF49;
+    }
+
+    @keyframes slide-out-up {
+      from { transform: translateY(0); opacity: 1; }
+      to { transform: translateY(-100%); opacity: 0; }
+    }
+
+    @keyframes slide-in-up {
+      from { transform: translateY(100%); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    @keyframes pulse-bg {
+      0% { background-color: #F2F2F2; }
+      50% { background-color: #e9e4f5; }
+      100% { background-color: #F2F2F2; }
+    }
+
+    .animate-slide-out-up {
+      animation: slide-out-up 0.5s forwards;
+    }
+
+    .animate-slide-in-up {
+      animation: slide-in-up 0.5s forwards;
+    }
+
+    .pulse-background {
+      animation: pulse-bg 1s;
+    }
+  </style>
+</head>
+<body class="bg-[#9D8ABB] min-h-screen flex items-center justify-center p-4">
+  <div class="bg-[#F2F2F2] p-6 rounded-2xl shadow-xl max-w-2xl w-full">
+    <h1 class="text-3xl font-bold text-center mb-6 text-[#532A8C]">Hazard Learning Activity</h1>
+
+    <!-- Progress Tracker -->
+    <div id="progress" class="text-center text-sm text-[#025159] mb-2 font-medium"></div>
+
+    <!-- Tube Container -->
+    <div id="tube-container" class="relative overflow-hidden h-64 rounded-xl border-2 p-4 flex items-center justify-center bg-[#F2F2F2]" style="border-color: #C3ACE8;">
+      <div id="content-display" class="absolute w-full h-full flex flex-col justify-center items-center text-center px-4"></div>
+    </div>
+
+    <!-- Buttons -->
+    <div class="mt-8 flex flex-col gap-4">
+      <button id="roll-button" class="py-3 rounded-xl text-white font-semibold">Next hazard</button>
+      <button id="restart-button" class="py-3 rounded-xl text-white font-semibold hidden">Start Over</button>
+    </div>
+  </div>
+
+  <script>
+    const hazardContent = [
+      {
+        category: "Physical Hazards",
+        items: [
+          "Slippery floors: Spills of water, saliva, or cleaning solutions in treatment rooms, labs, or waiting areas.",
+          "Radiation exposure: From improperly calibrated or malfunctioning X-ray machines.",
+          "Ergonomic strain from poor posture: Working at the dental chair for long periods.",
+          "Loud noises: From compressors and suction units.",
+          "Trip hazards: Cluttered treatment rooms or tangled cords."
+        ]
+      },
+      {
+        category: "Mechanical/Electrical Hazards",
+        items: [
+          "Faulty equipment: Malfunctioning chairs or ultrasonic cleaners.",
+          "Electrical malfunctions: Damaged wiring or overloaded circuits.",
+          "Compressed gas risks: Leaks from gas cylinders."
+        ]
+      },
+      {
+        category: "Chemical Hazards",
+        items: [
+          "Disinfectants and sterilising agents: Exposure to glutaraldehyde or bleach.",
+          "Anesthetics: Inhalation or accidental needle sticks.",
+          "X-ray processing solutions: Exposure to corrosive chemicals.",
+          "Mercury: From amalgam fillings."
+        ]
+      },
+      {
+        category: "Biological Hazards",
+        items: [
+          "Bloodborne pathogens: Hepatitis B/C or HIV from needle sticks.",
+          "Contaminated instruments: Improper sterilisation.",
+          "Patient-borne infections: Airborne respiratory infections."
+        ]
+      },
+      {
+        category: "Psychological Hazards",
+        items: [
+          "Patient-related stress: Dealing with anxious or aggressive patients.",
+          "Workload stress: Tight schedules and high volume.",
+          "Verbal or physical abuse: From distressed patients."
+        ]
+      }
+    ];
+
+    const contentDisplay = document.getElementById('content-display');
+    const rollButton = document.getElementById('roll-button');
+    const restartButton = document.getElementById('restart-button');
+    const progressDisplay = document.getElementById('progress');
+
+    let flatContent = [];
+    hazardContent.forEach(group => {
+      group.items.forEach(item => {
+        flatContent.push({
+          category: group.category,
+          item
+        });
+      });
+    });
+
+    let currentIndex = 0;
+
+    function updateProgress() {
+      progressDisplay.textContent = `Hazard ${currentIndex + 1} of ${flatContent.length}`;
+    }
+
+    function showContent(index) {
+      const data = flatContent[index];
+      const newContent = document.createElement('div');
+      newContent.className = 'absolute w-full h-full flex flex-col justify-center items-center text-center px-4 animate-slide-in-up';
+      newContent.innerHTML = `
+        <h2 class="text-2xl font-semibold mb-2 text-[#532A8C]">${data.category}</h2>
+        <p class="text-lg text-[#532A8C]">${data.item}</p>
+      `;
+
+      const oldContent = contentDisplay.firstElementChild;
+      if (oldContent) {
+        oldContent.classList.add('animate-slide-out-up');
+        oldContent.addEventListener('animationend', () => {
+          contentDisplay.removeChild(oldContent);
+          contentDisplay.appendChild(newContent);
+          document.getElementById('tube-container').classList.add('pulse-background');
+          setTimeout(() => {
+            document.getElementById('tube-container').classList.remove('pulse-background');
+          }, 1000);
+        }, { once: true });
+      } else {
+        contentDisplay.appendChild(newContent);
+      }
+
+      updateProgress();
+    }
+
+    rollButton.addEventListener('click', () => {
+      if (currentIndex < flatContent.length - 1) {
+        currentIndex++;
+        showContent(currentIndex);
+        if (currentIndex === flatContent.length - 1) {
+          rollButton.classList.add('hidden');
+          restartButton.classList.remove('hidden');
+        }
+      }
+    });
+
+    restartButton.addEventListener('click', () => {
+      currentIndex = 0;
+      showContent(currentIndex);
+      restartButton.classList.add('hidden');
+      rollButton.classList.remove('hidden');
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      showContent(currentIndex);
+    });
+  </script>
+</body>
+</html>
